@@ -1,0 +1,74 @@
+.page-head h1 {
+  margin: 0 0 0.15rem;
+  font-size: 1.5rem;
+}
+
+.page-head {
+  margin-bottom: 0.5rem;
+}
+
+.muted {
+  color: var(--mat-sys-on-surface-variant);
+  margin-top: 0;
+}
+
+.alert {
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.alert.error {
+  background: #fdecea;
+  border: 1px solid #e5a19a;
+  color: #8c1f16;
+}
+
+.alert.ok {
+  background: #e6f4ee;
+  border: 1px solid #9cc9b8;
+  color: #14532d;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: #e2e5e2;
+  color: #3c4340;
+}
+
+.badge[data-level='emergency'] {
+  background: #fdecea;
+  color: #b3261e;
+}
+
+.badge[data-level='urgent'] {
+  background: #fff3e2;
+  color: #b25a09;
+}
+
+.badge[data-level='routine'] {
+  background: #e6f4ee;
+  color: #146c2e;
+}
+
+.booked-day .mat-calendar-body-cell-content {
+  font-weight: 700;
+  color: var(--mat-sys-primary);
+  position: relative;
+}
+
+.booked-day .mat-calendar-body-cell-content::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--mat-sys-primary);
+}

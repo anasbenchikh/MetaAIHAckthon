@@ -1,0 +1,96 @@
+.cal-layout {
+  display: grid;
+  grid-template-columns: minmax(300px, 380px) 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 860px) {
+  .cal-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cal-card {
+  padding: 1rem 1rem 0.8rem;
+  height: fit-content;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.5rem 0.2rem;
+  font-size: 0.82rem;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--mat-sys-primary);
+}
+
+.day-card {
+  padding: 1.1rem 1.25rem;
+}
+
+.day-card h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.05rem;
+  text-transform: capitalize;
+}
+
+.day-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.day-rows li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  font-size: 0.9rem;
+}
+
+.day-rows li:last-child {
+  border-bottom: none;
+}
+
+.time {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--mat-sys-primary);
+  min-width: 3.2rem;
+}
+
+.row-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  flex: 1;
+}
+
+.list-card {
+  padding: 1.1rem 1.25rem;
+}
+
+.list-card h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.05rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table.data {
+  width: 100%;
+}
+
+.padded {
+  padding: 1rem 0;
+}

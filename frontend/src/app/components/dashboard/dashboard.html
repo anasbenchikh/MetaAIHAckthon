@@ -1,0 +1,163 @@
+<section class="page">
+  <div class="page-head">
+    <h1>{{ lang.t('dash.title') }}</h1>
+    <p class="muted">
+      {{ lang.t('dash.subtitle') }}
+      @if (updatedAt()) {
+        <span>{{ lang.t('dash.updated') }} {{ updatedAt() | date: 'mediumTime' }}</span>
+      }
+    </p>
+  </div>
+
+  @if (error()) {
+    <p class="alert error">{{ error() }}</p>
+  }
+  @if (notice()) {
+    <p class="alert ok">{{ notice() }}</p>
+  }
+
+  <div class="month-bar">
+    <span><strong>{{ stats()?.calls ?? '—' }}</strong> {{ lang.t('dash.mCalls') }}</span>
+    <span><strong>{{ stats()?.leads ?? '—' }}</strong> {{ lang.t('dash.mLeads') }}</span>
+    <span><strong>{{ stats()?.appointments ?? '—' }}</strong> {{ lang.t('dash.mAppts') }}</span>
+    <span>
+      <strong>{{ stats() ? (stats()!.accepted_revenue | currency: 'EUR' : 'symbol' : '1.0-0') : '—' }}</strong>
+      {{ lang.t('dash.mRevenue') }}
+    </span>
+  </div>
+
+  <div class="stats">
+    <mat-card class="stat">
+      <div class="stat-icon leads-icon"><mat-icon>group</mat-icon></div>
+      <div class="stat-body">
+        <span class="stat-value">{{ leads().length }}</span>
+        <span class="stat-label">{{ lang.t('dash.statLeads') }}</span>
+      </div>
+      <a routerLink="/leads" class="stat-link">{{ lang.t('dash.viewLeads') }} <mat-icon>arrow_forward</mat-icon></a>
+    </mat-card>
+
+    <mat-card class="stat">
+      <div class="stat-icon appts-icon"><mat-icon>calendar_month</mat-icon></div>
+      <div class="stat-body">
+        <span class="stat-value">{{ appointments().length }}</span>
+        <span class="stat-label">{{ lang.t('dash.statAppts') }}</span>
+      </div>
+      <a routerLink="/appointments" class="stat-link">
+        {{ lang.t('dash.viewPlanning') }} <mat-icon>arrow_forward</mat-icon>
+      </a>
+    </mat-card>
+
+    <mat-card class="stat revenue">
+      <div class="stat-icon revenue-icon"><mat-icon>euro</mat-icon></div>
+      <div class="stat-body">
+        <span class="stat-value">{{ revenue() | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+        <span class="stat-label">{{ lang.t('dash.statRevenue') }}</span>
+      </div>
+    </mat-card>
+  </div>
+
+  <mat-accordion multi>
+    <mat-expansion-panel expanded>
+      <mat-expansion-panel-header>
+        <mat-icon class="panel-icon">group</mat-icon>
+        <mat-panel-title>{{ lang.t('dash.recentLeads') }}</mat-panel-title>
+        <mat-panel-description>{{ recentLeads().length }} {{ lang.t('dash.latest') }}</mat-panel-description>
+      </mat-expansion-panel-header>
+      @if (recentLeads().length === 0) {
+        <p class="muted">{{ lang.t('dash.noLeads') }}</p>
+      } @else {
+        <ul class="rows">
+          @for (lead of recentLeads(); track lead.id) {
+            <li>
+              <div class="row-main">
+                <strong>{{ lead.name || lang.t('dash.unknown') }}</strong>
+                <span class="muted">{{ lead.job_type || '—' }} · {{ lead.phone || '—' }}</span>
+              </div>
+              <div class="row-side">
+                @if (lead.urgency) {
+                  <span class="badge" [attr.data-level]="urgencyLevel(lead.urgency)">
+                    {{ lead.urgency }}
+                  </span>
+                }
+                <span class="muted small">{{ lead.created_at | date: 'medium' }}</span>
+                <button mat-icon-button (click)="recall(lead.phone)" [attr.aria-label]="lang.t('dash.call')">
+                  <mat-icon>call</mat-icon>
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+        <a routerLink="/leads" class="link">{{ lang.t('dash.allLeads') }}</a>
+      }
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded>
+      <mat-expansion-panel-header>
+        <mat-icon class="panel-icon">calendar_month</mat-icon>
+        <mat-panel-title>{{ lang.t('dash.upcoming') }}</mat-panel-title>
+        <mat-panel-description>{{ upcomingAppointments().length }} {{ lang.t('dash.upcomingN') }}</mat-panel-description>
+      </mat-expansion-panel-header>
+      @if (upcomingAppointments().length === 0) {
+        <p class="muted">{{ lang.t('dash.noAppts') }}</p>
+      } @else {
+        <ul class="rows">
+          @for (appt of upcomingAppointments(); track appt.id) {
+            <li>
+              <div class="row-main">
+                <strong>{{ appt.name || lang.t('dash.unknown') }}</strong>
+                <span class="muted">{{ appt.job_type || '—' }} · {{ appt.address || '—' }}</span>
+              </div>
+              <div class="row-side">
+                @if (appt.status) {
+                  <span class="badge" data-level="routine">{{ appt.status }}</span>
+                }
+                <span class="muted small">{{ appt.appointment_time | date: 'd MMM y, HH:mm' }}</span>
+              </div>
+            </li>
+          }
+        </ul>
+        <a routerLink="/appointments" class="link">{{ lang.t('dash.allPlanning') }}</a>
+      }
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded>
+      <mat-expansion-panel-header>
+        <mat-icon class="panel-icon">call</mat-icon>
+        <mat-panel-title>{{ lang.t('dash.recentCalls') }}</mat-panel-title>
+        <mat-panel-description>{{ recentCalls().length }} {{ lang.t('dash.latest') }}</mat-panel-description>
+      </mat-expansion-panel-header>
+      @if (recentCalls().length === 0) {
+        <p class="muted">{{ lang.t('dash.noCalls') }}</p>
+      } @else {
+        <ul class="rows">
+          @for (call of recentCalls(); track call.id) {
+            <li class="call-row">
+              <div class="row-main">
+                <strong>{{ call.from_number || lang.t('dash.unknown') }}</strong>
+                @if (callSummary(call)) {
+                  <span class="summary">
+                    <strong>{{ leadSentence(callSummary(call)) }}</strong>
+                    @if (restSentence(callSummary(call))) {
+                      <span class="muted"> {{ restSentence(callSummary(call)) }}</span>
+                    }
+                  </span>
+                } @else {
+                  <span class="muted">—</span>
+                }
+              </div>
+              <div class="row-side">
+                @if (call.status) {
+                  <span class="badge">{{ call.status }}</span>
+                }
+                <span class="muted small">{{ call.created_at | date: 'medium' }}</span>
+                <button mat-icon-button (click)="recall(call.from_number)" [attr.aria-label]="lang.t('dash.call')">
+                  <mat-icon>call</mat-icon>
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </mat-expansion-panel>
+  </mat-accordion>
+</section>

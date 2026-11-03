@@ -1,0 +1,64 @@
+<section class="page">
+  <div class="page-head">
+    <h1>{{ lang.t('leads.title') }}</h1>
+    <p class="muted">{{ subtitle() }}</p>
+  </div>
+
+  @if (error()) {
+    <p class="alert error">{{ error() }}</p>
+  }
+  @if (notice()) {
+    <p class="alert ok">{{ notice() }}</p>
+  }
+
+  <mat-card>
+    @if (loading()) {
+      <p class="muted padded">{{ lang.t('common.loading') }}</p>
+    } @else if (leads().length === 0) {
+      <p class="muted padded">{{ lang.t('leads.empty') }}</p>
+    } @else {
+      <div class="table-wrap">
+        <table mat-table [dataSource]="leads()" class="data">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>{{ lang.t('leads.colName') }}</th>
+            <td mat-cell *matCellDef="let lead">{{ lead.name || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="phone">
+            <th mat-header-cell *matHeaderCellDef>{{ lang.t('leads.colPhone') }}</th>
+            <td mat-cell *matCellDef="let lead">{{ lead.phone || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="job_type">
+            <th mat-header-cell *matHeaderCellDef>{{ lang.t('leads.colJob') }}</th>
+            <td mat-cell *matCellDef="let lead">{{ lead.job_type || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="urgency">
+            <th mat-header-cell *matHeaderCellDef>{{ lang.t('leads.colUrgency') }}</th>
+            <td mat-cell *matCellDef="let lead">
+              @if (lead.urgency) {
+                <span class="badge" [attr.data-level]="urgencyLevel(lead.urgency)">
+                  {{ lead.urgency }}
+                </span>
+              } @else {
+                —
+              }
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="created_at">
+            <th mat-header-cell *matHeaderCellDef>{{ lang.t('leads.colCreated') }}</th>
+            <td mat-cell *matCellDef="let lead">{{ lead.created_at | date: 'medium' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let lead">
+              <button mat-icon-button (click)="call(lead.phone)" [attr.aria-label]="lang.t('leads.call')">
+                <mat-icon>call</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns"></tr>
+        </table>
+      </div>
+    }
+  </mat-card>
+</section>
